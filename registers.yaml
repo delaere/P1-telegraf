@@ -1,0 +1,27 @@
+---
+1.8.1: 
+  label: "offtake_peak"
+  tolerance: 0.025
+1.8.2: 
+  label: "offtake_offpeak"
+  tolerance: 0.025
+2.8.1: 
+  label: "injection_peak"
+  tolerance: 0.025
+2.8.2: 
+  label: "injection_offpeak"
+  tolerance: 0.025
+1.7.0: 
+  label: "offtake_power"
+  tolerance: 10%
+2.7.0: 
+  label: "injection_power"
+  tolerance: 10%
+32.7.0: 
+  label: "voltage"
+  tolerance: 5
+31.7.0: 
+  label: "current"
+  tolerance: 10%
+timestamp:
+  tolerance: 300
