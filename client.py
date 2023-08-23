@@ -1,3 +1,4 @@
+import argparse
 import asyncio, telnetlib3
 import decoder
 
@@ -18,8 +19,18 @@ async def shell(reader, writer):
             previous = rec
 
 def main():
+    # load options
+    argParser = argparse.ArgumentParser(
+            prog="client.py",
+            description="Telegraf external deamon input plugin to read P1 data.",
+            epilog="Reduce your energy footprint!")
+    argParser.add_argument("-t", "--host", help="telnet host", default="esp-easy.lan")
+    argParser.add_argument("-p", "--port", help="telnet port", default="8088")
+    args = argParser.parse_args()
+
+    # telnet client loop
     loop = asyncio.get_event_loop()
-    coro = telnetlib3.open_connection('esp-easy.lan', 8088, shell=shell)
+    coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
     reader, writer = loop.run_until_complete(coro)
     loop.run_until_complete(writer.protocol.waiter_closed)
 
