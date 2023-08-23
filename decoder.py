@@ -2,7 +2,6 @@ import re
 import yaml
 from datetime import datetime
 
-#TODO: for the timestamp, the S means summer time and will be replaced by a W for winter !
 # load data about registers
 with open('registers.yaml') as file:
     registers = yaml.safe_load(file)
@@ -50,14 +49,14 @@ class record:
         fields = {}
         tolerance = {}
         for n,line in enumerate(content(record)):
-            m = re.match('0-0:1.0.0\((\d+)S\)',line)
+            m = re.match('0-0:1.0.0\((\d+)(S|W)\)',line)
             if m :
-                timestamp = datetime.strptime(m.group(1), "%y%m%d%H%M%S")
+                timestamp = datetime.strptime(f"{m.group(1)}+0{'2' if m.group(2)=='S' else '1'}:00", "%y%m%d%H%M%S%z")
             m = re.match('(\d-\d):(\d+.\d+.\d+)\((\d+.\d+)\*(.*)\)',line)
             if m and m.group(1)=="1-0":
                 register = m.group(2)
                 value = float(m.group(3))
-                unit = m.group(4)
+                #unit = m.group(4)
                 if register in registers:
                     fields[registers[register]['label']] = value
                     tolerance[registers[register]['label']] = {k: registers[register][k] for k in ('tolerance','abs')}
@@ -75,35 +74,6 @@ class record:
             output += f'{"," if count else " "}{field}={value}'
         output += f" {int(datetime.timestamp(self.timestamp)*1E9)}"
         return output
-
-
-#def lineProtocol(measurement, tag_set, field_set, timestamp):
-#    output = f"{measurement}"
-#    for tag,value in tag_set.items():
-#        output += f",{tag}={value}"
-#    for count,(field, value) in enumerate(field_set.items()):
-#        output += f'{"," if count else " "}{field}={value}'
-#    output += f" {int(datetime.timestamp(timestamp)*1E9)}"
-#    return output
-#
-#def processRecord(record):
-#    fields = {}
-#    def content(foo): return iter(foo.splitlines())
-#    for n,line in enumerate(content(record)):
-#        m = re.match('0-0:1.0.0\((\d+)S\)',line)
-#        if m :
-#            timestamp = datetime.strptime(m.group(1), "%y%m%d%H%M%S")
-#            #print(timestamp)
-#        m = re.match('(\d-\d):(\d+.\d+.\d+)\((\d+.\d+)\*(.*)\)',line)
-#        if m and m.group(1)=="1-0":
-#            register = m.group(2)
-#            value = float(m.group(3))
-#            unit = m.group(4)
-#            if register in registers:
-#                #print(f"{registers[register]}: {value} {unit}")
-#                fields[registers[register]] = value
-#    
-#    return lineProtocol("ORES",{},fields,timestamp)
 
 def main():
     
