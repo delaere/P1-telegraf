@@ -5,13 +5,11 @@ import decoder
 async def shell(reader, writer):
     previous = None
     while True:
-        # read stream until '?' mark is found
+        # read stream
         outp = await reader.read(1024)
         if not outp:
             # End of File
             break
-        # display all server output
-        # print(decoder.processRecord(outp))
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
         if previous is None or previous != rec :
