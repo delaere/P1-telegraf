@@ -32,6 +32,8 @@ class record:
         # the idea here is to use this for the deadband implementation.
         # so we need to check if two records are close enough to be considered equal
         # the criteria will depend on the field and is loaded from yaml.
+        if set(self.field_set) != set(other.field_set):
+            return False
         for field, value in self.field_set.items():
             if self.tolerance[field]['abs']:
                 if abs(value-other.field_set[field])>self.tolerance[field]['tolerance']:
