@@ -1,8 +1,12 @@
 import argparse
 import asyncio, telnetlib3
 import decoder
+import logger as log
+
+logger = None
 
 async def shell(reader, writer):
+    global logger
     previous = None
     while True:
         # read stream
@@ -13,6 +17,7 @@ async def shell(reader, writer):
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
         if previous is None or previous != rec :
+            logger.log(log.LOG_DEBUG,str(rec))
             print(rec)
             previous = rec
 
@@ -26,9 +31,15 @@ def main():
     argParser.add_argument("-p", "--port", help="telnet port", default="8088")
     args = argParser.parse_args()
 
+    # the logger
+    global logger
+    logger = log.logger(False,True,log.LOG_DEBUG)
+
     # telnet client loop
+    logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
     loop = asyncio.get_event_loop()
     coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
+    logger.log(log.LOG_INFO,f"Connected!")
     reader, writer = loop.run_until_complete(coro)
     loop.run_until_complete(writer.protocol.waiter_closed)
 
