@@ -2,6 +2,9 @@ import re
 import yaml
 from datetime import datetime
 
+factors = { 'k':1E3, 'M':1E6, 'G':1E9, 'm':1E-3, 'u':1E-6 }
+
+
 # load data about registers
 with open('registers.yaml') as file:
     registers = yaml.safe_load(file)
@@ -59,9 +62,10 @@ class record:
             if m and m.group(1)=="1-0":
                 register = m.group(2)
                 value = float(m.group(3))
-                #unit = m.group(4)
+                unit = m.group(4)
                 if register in registers:
-                    fields[registers[register]['label']] = value
+                    factor = factors.get(unit[0],1)
+                    fields[registers[register]['label']] = value*factor
                     tolerance[registers[register]['label']] = {k: registers[register][k] for k in ('tolerance','abs')}
         tolerance["timestamp"] = {k: registers['timestamp'][k] for k in ('tolerance','abs')}
         self.field_set = fields
