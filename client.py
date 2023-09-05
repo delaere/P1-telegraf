@@ -18,7 +18,7 @@ async def shell(reader, writer):
         rec = decoder.record(raw=outp,measurement="ORES")
         if previous is None or previous != rec :
             logger.log(log.LOG_DEBUG,str(rec))
-            print(rec)
+            print(rec, flush=True)
             previous = rec
 
 def main():
