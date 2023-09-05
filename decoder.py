@@ -50,6 +50,7 @@ class record:
         def content(foo): return iter(foo.splitlines())
         fields = {}
         tolerance = {}
+        timestamp = None
         for n,line in enumerate(content(record)):
             m = re.match('0-0:1.0.0\((\d+)(S|W)\)',line)
             if m :
@@ -74,7 +75,8 @@ class record:
             output += f",{tag}={value}"
         for count,(field, value) in enumerate(self.field_set.items()):
             output += f'{"," if count else " "}{field}={value}'
-        output += f" {int(datetime.timestamp(self.timestamp)*1E9)}"
+        if self.timestamp is not None:
+            output += f" {int(datetime.timestamp(self.timestamp)*1E9)}"
         return output
 
 def main():
