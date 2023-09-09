@@ -36,12 +36,14 @@ def main():
     logger = log.logger(False,True,log.LOG_DEBUG)
 
     # telnet client loop
-    logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
-    loop = asyncio.get_event_loop()
-    coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
-    logger.log(log.LOG_INFO,f"Connected!")
-    reader, writer = loop.run_until_complete(coro)
-    loop.run_until_complete(writer.protocol.waiter_closed)
+    while(1):
+        logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
+        loop = asyncio.get_event_loop()
+        coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
+        logger.log(log.LOG_INFO,f"Connected!")
+        reader, writer = loop.run_until_complete(coro)
+        loop.run_until_complete(writer.protocol.waiter_closed)
 
 if __name__ == "__main__":
     main()
+    exit(1)
