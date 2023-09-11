@@ -13,6 +13,7 @@ async def shell(reader, writer):
         outp = await reader.read(1024)
         if not outp:
             # End of File
+            exit(1)
             break
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
