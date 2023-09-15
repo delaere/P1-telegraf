@@ -53,7 +53,7 @@ class record:
         def content(foo): return iter(foo.splitlines())
         fields = {}
         tolerance = {}
-        timestamp = datetime.now()
+        timestamp = datetime.now(timezone.utc)
         for n,line in enumerate(content(record)):
             m = re.match('0-0:1.0.0\((\d+)(S|W)\)',line)
             if m :
