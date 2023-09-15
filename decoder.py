@@ -1,12 +1,12 @@
+import os
 import re
 import yaml
 from datetime import datetime
 
 factors = { 'k':1E3, 'M':1E6, 'G':1E9, 'm':1E-3, 'u':1E-6 }
 
-
 # load data about registers
-with open('registers.yaml') as file:
+with open(os.path.join(os.path.dirname(__file__), 'registers.yaml')) as file:
     registers = yaml.safe_load(file)
 for code,reg in registers.items():
     reg['abs'] = isinstance(reg['tolerance'], (int, float))
