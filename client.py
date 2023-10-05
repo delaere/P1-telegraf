@@ -37,7 +37,7 @@ def main():
 
     # the logger
     global logger
-    logger = log.logger(False,True,True,"./log.txt",log.LOG_DEBUG)
+    logger = log.logger(False,True,True,"/etc/telegraf/log.txt",log.LOG_DEBUG)
 
     # telnet client loop
     while(1):
