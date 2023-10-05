@@ -31,6 +31,10 @@ class record:
         else:
             self.processRawRecord(raw)
 
+    def valid(self):
+        # check that this is a valid measurement
+        return (len(self.field_set)>0)
+
     def __eq__(self, other):
         # the idea here is to use this for the deadband implementation.
         # so we need to check if two records are close enough to be considered equal

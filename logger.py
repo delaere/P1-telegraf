@@ -7,9 +7,11 @@ class logger:
        Priority levels (high to low):
        LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG.
     """
-    def __init__(self,console=True,syslog=False,threshold=LOG_INFO):
+    def __init__(self,console=True,syslog=False,disk=False, path="./log.txt", threshold=LOG_INFO):
         self.console = console
         self.syslog = syslog
+        self.disk = disk
+        self.path = path
         self.threshold = threshold
 
         self.names = { 
@@ -34,4 +36,7 @@ class logger:
                 print(f"{self.names[priority]}: {message}")
         if self.syslog:
             syslog(priority,message)
+        if self.disk:
+            with open(self.path, "a") as output:
+                output.write(f"{message}\n")
 

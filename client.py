@@ -17,6 +17,9 @@ async def shell(reader, writer):
             break
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
+        logger.log(log.LOG_DEBUG,f"reading: {str(rec)}")
+        if not rec.valid():
+            continue
         if previous is None or previous != rec :
             logger.log(log.LOG_DEBUG,str(rec))
             print(rec, flush=True)
@@ -34,7 +37,7 @@ def main():
 
     # the logger
     global logger
-    logger = log.logger(False,True,log.LOG_DEBUG)
+    logger = log.logger(False,True,True,"./log.txt",log.LOG_DEBUG)
 
     # telnet client loop
     while(1):
