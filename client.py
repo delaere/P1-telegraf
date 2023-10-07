@@ -10,7 +10,9 @@ async def shell(reader, writer):
     previous = None
     while True:
         # read stream
+        logger.log(log.LOG_DEBUG,"process loop")
         outp = await reader.read(1024)
+        logger.log(log.LOG_DEBUG,f"{outp}")
         if not outp:
             # End of File
             exit(1)
@@ -24,6 +26,7 @@ async def shell(reader, writer):
             logger.log(log.LOG_DEBUG,str(rec))
             print(rec, flush=True)
             previous = rec
+        logger.log(log.LOG_DEBUG,"end of process loop")
 
 def main():
     # load options
@@ -37,6 +40,7 @@ def main():
 
     # the logger
     global logger
+    #logger = log.logger(False,True,True,"./log.txt",log.LOG_DEBUG)
     logger = log.logger(False,True,True,"/etc/telegraf/log.txt",log.LOG_DEBUG)
 
     # telnet client loop
