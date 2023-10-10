@@ -5,18 +5,24 @@ import logger as log
 
 logger = None
 
+# the telnet client loop
 async def shell(reader, writer):
     global logger
     previous = None
     while True:
         # read stream
         logger.log(log.LOG_DEBUG,"process loop")
-        outp = await reader.read(1024)
+        try:
+            async with asyncio.timeout(10):
+                #outp = await reader.read(712)
+                outp = await reader.read(1024)
+        except TimeoutError:
+            logger.log(log.LOG_DEBUG,"")
+            exit(1)
         logger.log(log.LOG_DEBUG,f"{outp}")
         if not outp:
             # End of File
             exit(1)
-            break
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
         logger.log(log.LOG_DEBUG,f"reading: {str(rec)}")
@@ -44,13 +50,12 @@ def main():
     logger = log.logger(False,True,True,"/etc/telegraf/log.txt",log.LOG_DEBUG)
 
     # telnet client loop
-    while(1):
-        logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
-        loop = asyncio.get_event_loop()
-        coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
-        logger.log(log.LOG_INFO,f"Connected!")
-        reader, writer = loop.run_until_complete(coro)
-        loop.run_until_complete(writer.protocol.waiter_closed)
+    logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
+    loop = asyncio.get_event_loop()
+    coro = telnetlib3.open_connection(args.host, args.port, shell=shell)
+    logger.log(log.LOG_INFO,f"Connected!")
+    reader, writer = loop.run_until_complete(coro)
+    loop.run_until_complete(writer.protocol.waiter_closed)
 
 if __name__ == "__main__":
     main()
