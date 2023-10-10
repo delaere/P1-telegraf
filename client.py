@@ -13,11 +13,9 @@ async def shell(reader, writer):
         # read stream
         logger.log(log.LOG_DEBUG,"process loop")
         try:
-            async with asyncio.timeout(10):
-                #outp = await reader.read(712)
-                outp = await reader.read(1024)
+            outp = await asyncio.wait_for(reader.read(1024), timeout=10.0)
         except TimeoutError:
-            logger.log(log.LOG_DEBUG,"")
+            logger.log(log.LOG_DEBUG,"timeout")
             exit(1)
         logger.log(log.LOG_DEBUG,f"{outp}")
         if not outp:
