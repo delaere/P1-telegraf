@@ -11,26 +11,23 @@ async def shell(reader, writer):
     previous = None
     while True:
         # read stream
-        logger.log(log.LOG_DEBUG,"process loop")
         try:
             outp = await asyncio.wait_for(reader.read(1024), timeout=10.0)
-        except TimeoutError:
-            logger.log(log.LOG_DEBUG,"timeout")
+        except asyncio.exceptions.TimeoutError:
+            logger.log(log.LOG_DEBUG,"Telnet connection timeout.")
             exit(1)
-        logger.log(log.LOG_DEBUG,f"{outp}")
         if not outp:
             # End of File
+            logger.log(log.LOG_DEBUG,"Telnet connection: EOF.")
             exit(1)
         # display only the records passing deadband filter.
         rec = decoder.record(raw=outp,measurement="ORES")
-        logger.log(log.LOG_DEBUG,f"reading: {str(rec)}")
         if not rec.valid():
             continue
         if previous is None or previous != rec :
             logger.log(log.LOG_DEBUG,str(rec))
             print(rec, flush=True)
             previous = rec
-        logger.log(log.LOG_DEBUG,"end of process loop")
 
 def main():
     # load options
@@ -44,8 +41,7 @@ def main():
 
     # the logger
     global logger
-    #logger = log.logger(False,True,True,"./log.txt",log.LOG_DEBUG)
-    logger = log.logger(False,True,True,"/etc/telegraf/log.txt",log.LOG_DEBUG)
+    logger = log.logger(False,True,False,"/etc/telegraf/log.txt",log.LOG_DEBUG)
 
     # telnet client loop
     logger.log(log.LOG_INFO,f"Initiating telnet connection to {args.host}:{args.port}")
